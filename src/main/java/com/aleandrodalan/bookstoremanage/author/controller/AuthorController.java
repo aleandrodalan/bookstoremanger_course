@@ -19,10 +19,14 @@ public class AuthorController implements AuthorControllerDocs {
         this.authorService = authorService;
     }
 
-
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public AuthorDTO create(@RequestBody @Valid AuthorDTO authorDTO) {
         return authorService.create(authorDTO);
+    }
+
+    @GetMapping("/{id}")
+    public AuthorDTO findById(@PathVariable("id") Long id) {
+        return authorService.findById(id);
     }
 }
