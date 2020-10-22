@@ -21,6 +21,8 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
@@ -82,5 +84,25 @@ public class AuthorServiceTest {
         when(authorRepository.findById(expectedFoundAuthorDTO.getId())).thenReturn(Optional.empty());
 
         assertThrows(AuthorNotFoundException.class, () -> authorService.findById(expectedFoundAuthorDTO.getId()));
+    }
+
+    @Test
+    void whenListAuthorsIsCalledThenItShouldBeReturned() {
+        AuthorDTO expectedFoundAuthorDTO = authorDTOBuilder.buildAuthorDTO();
+        Author expectedFoundAuthor = authorMapper.toModel(expectedFoundAuthorDTO);
+
+        when(authorRepository.findAll()).thenReturn(Collections.singletonList(expectedFoundAuthor));
+
+        List<AuthorDTO> foundAuthorsDTO = authorService.findAll();
+        assertThat(foundAuthorsDTO.size(), is(equalTo(1)));
+        assertThat(foundAuthorsDTO.get(0), is(equalTo(expectedFoundAuthorDTO)));
+    }
+
+    @Test
+    void whenListAuthorsIsCalledThenAnEmptyListShouldBeReturned() {
+        when(authorRepository.findAll()).thenReturn(Collections.EMPTY_LIST);
+
+        List<AuthorDTO> foundAuthorsDTO = authorService.findAll();
+        assertThat(foundAuthorsDTO.size(), is(equalTo(0)));
     }
 }
